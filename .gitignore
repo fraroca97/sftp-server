@@ -1,0 +1,8 @@
+custom-dirs/*
+!custom-dirs/public
+
+custom-dirs/public/*
+!custom-dirs/public/.keep
+
+home/*
+!home/.keep

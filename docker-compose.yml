@@ -1,0 +1,25 @@
+version: '3.8'
+
+x-sftp: &sftp_template
+  image: atmoz/sftp:alpine
+  networks:
+    - local_sftp
+  volumes:
+      - /etc/ssh/ssh_host_ed25519_key:/etc/ssh/ssh_host_ed25519_key
+      - /etc/ssh/ssh_host_rsa_key:/etc/ssh/ssh_host_rsa_key
+      - ./sshd_config:/etc/ssh/sshd_config
+      - ./users.conf:/etc/sftp/users.conf
+      - ./home:/home
+      - ./custom-dirs/public:/public
+
+services:
+  sftp1:
+    <<: *sftp_template
+    container_name: local_sftp_server1
+    ports:
+        - "22:22"
+  sftp2:
+    <<: *sftp_template
+    container_name: local_sftp_server2
+    ports:
+        - "2222:22"
