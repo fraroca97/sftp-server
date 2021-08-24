@@ -2,8 +2,6 @@ version: '3.8'
 
 x-sftp: &sftp_template
   image: atmoz/sftp:alpine
-  networks:
-    - local_sftp
   volumes:
       - /etc/ssh/ssh_host_ed25519_key:/etc/ssh/ssh_host_ed25519_key
       - /etc/ssh/ssh_host_rsa_key:/etc/ssh/ssh_host_rsa_key
@@ -11,6 +9,17 @@ x-sftp: &sftp_template
       - ./users.conf:/etc/sftp/users.conf
       - ./home:/home
       - ./custom-dirs/public:/public
+
+x-ftp: &ftp_template
+  image: stilliard/pure-ftpd
+  environment:
+      # PUBLICHOST: "localhost"
+      FTP_USER_NAME: test
+      FTP_USER_PASS: 123456
+      FTP_USER_HOME: /public
+  volumes:
+      - ./custom-dirs/public:/public
+
 
 services:
   sftp1:
@@ -23,3 +32,15 @@ services:
     container_name: local_sftp_server2
     ports:
         - "2222:22"
+  ftp1:
+    <<: *ftp_template
+    container_name: local_ftp_server1
+    ports:
+        - "21:21"
+        - 30000-30009:30000-30009
+  ftp2:
+    <<: *ftp_template
+    container_name: local_ftp_server2
+    ports:
+        - "2221:21"
+        - 40000-40009:30000-30009
